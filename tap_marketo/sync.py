@@ -36,6 +36,8 @@ def determine_replication_key(tap_stream_id):
         return 'updatedAt'
     elif tap_stream_id == 'campaigns':
         return 'updatedAt'
+    elif tap_stream_id == 'smartCampaigns':
+        return 'updatedAt'
     elif tap_stream_id == 'programs':
         return 'updatedAt'
     else:
@@ -376,7 +378,7 @@ def sync_programs(client, state, stream):
 
 
 def sync_paginated(client, state, stream):
-    # http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Campaigns/getCampaignsUsingGET
+    # https://developers.marketo.com/rest-api/endpoint-reference/asset-endpoint-reference/#/Smart_Campaigns/getAllSmartCampaignsGET
     # http://developers.marketo.com/rest-api/endpoint-reference/lead-database-endpoint-reference/#!/Static_Lists/getListsUsingGET
     #
     # Campaigns and Static Lists are paginated with a max return of 300
@@ -387,7 +389,7 @@ def sync_paginated(client, state, stream):
     singer.write_schema(stream["tap_stream_id"], stream["schema"], stream["key_properties"], bookmark_properties=[replication_key])
     start_date = bookmarks.get_bookmark(state, stream["tap_stream_id"], replication_key)
     params = {"batchSize": 300}
-    endpoint = "rest/v1/{}.json".format(stream["tap_stream_id"])
+    endpoint = "rest/asset/v1/{}.json".format(stream["tap_stream_id"])
 
     # Paginated requests use paging tokens for retrieving the next page
     # of results. These tokens are stored in the state for resuming
@@ -488,7 +490,7 @@ def sync(client, catalog, config, state):
             state, record_count = sync_leads(client, state, stream, config)
         elif stream["tap_stream_id"].startswith("activities_"):
             state, record_count = sync_activities(client, state, stream, config)
-        elif stream["tap_stream_id"] in ["campaigns", "lists"]:
+        elif stream["tap_stream_id"] in ["smartCampaigns", "campaigns", "lists"]:
             state, record_count = sync_paginated(client, state, stream)
         elif stream["tap_stream_id"] == "programs":
             state, record_count = sync_programs(client, state, stream)
