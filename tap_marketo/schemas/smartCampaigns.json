@@ -1,6 +1,6 @@
 {
-  "tap_stream_id": "campaigns",
-  "stream": "campaigns",
+  "tap_stream_id": "smartCampaigns",
+  "stream": "smartCampaigns",
   "key_properties": ["id"],
   "schema": {
     "type": "object",
@@ -17,7 +17,10 @@
         "type": "string",
         "format": "date-time"
       },
-      "active": {
+      "isActive": {
+        "type": ["boolean", "null"]
+      },
+      "isSystem": {
         "type": ["boolean", "null"]
       },
       "description": {
@@ -26,16 +29,13 @@
       "name": {
         "type": "string"
       },
-      "programId": {
+      "parentProgramId": {
         "type": ["integer", "null"]
-      },
-      "programName": {
-        "type": ["string", "null"]
       },
       "type": {
         "type": "string"
       },
-      "workspaceName": {
+      "workspace": {
         "type": ["string", "null"]
       },
       "status": {
@@ -51,7 +51,20 @@
             "type": ["null", "integer"]
           }
         }
+      },
+      "computedUrl": {
+        "type": ["null", "string"]
+      },
+      "flowId": {
+        "type": ["integer", "null"]
+      },
+      "smartListId": {
+        "type": ["integer", "null"]
+      },
+      "type": {
+        "type": ["string", "null"]
       }
+
     }
   }
 }

@@ -30,7 +30,7 @@ setup(name='tap-marketo',
       package_data = {
           'tap_marketo/schemas': [
               "activity_types.json",
-              "campaigns.json",
+              "smartCampaigns.json",
               "programs.json",
               "lists.json"
           ]

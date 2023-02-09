@@ -208,7 +208,7 @@ def discover(client):
     streams.append(discover_leads(client))
     streams.append(discover_catalog("activity_types", ACTIVITY_TYPES_AUTOMATIC_INCLUSION, unsupported=ACTIVITY_TYPES_UNSUPPORTED, stream_automatic_inclusion=True))
     streams.extend(discover_activities(client))
-    streams.append(discover_catalog("campaigns", CAMPAIGNS_AUTOMATIC_INCLUSION))
+    streams.append(discover_catalog("smartCampaigns", CAMPAIGNS_AUTOMATIC_INCLUSION))
     streams.append(discover_catalog("lists", LISTS_AUTOMATIC_INCLUSION))
     streams.append(discover_catalog("programs", PROGRAMS_AUTOMATIC_INCLUSION))
     json.dump({"streams": streams}, sys.stdout, indent=2)
