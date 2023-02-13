@@ -111,9 +111,14 @@ def update_state_with_export_info(state, stream, bookmark=None, export_id=None, 
     return state
 
 
-def get_export_end(export_start, end_days=MAX_EXPORT_DAYS):
+def get_export_end(export_start, end_date=None, end_days=MAX_EXPORT_DAYS):
     export_end = export_start.add(days=end_days)
-    if export_end >= pendulum.utcnow():
+
+    end_date = pendulum.utcnow() if end_date is None else pendulum.parse(end_date)
+
+    if export_end >= end_date:
+        export_end = end_date
+    elif export_end >= pendulum.utcnow():
         export_end = pendulum.utcnow()
 
     return export_end.replace(microsecond=0)
@@ -167,7 +172,9 @@ def get_or_create_export_for_leads(client, state, stream, export_start, config):
         query_field = "updatedAt" if client.use_corona else "createdAt"
         max_export_days = int(config.get('max_export_days',
                                          MAX_EXPORT_DAYS))
-        export_end = get_export_end(export_start,
+
+        end_date = config.get('end_date')
+        export_end = get_export_end(export_start, end_date=end_date,
                                     end_days=max_export_days)
         query = {query_field: {"startAt": export_start.isoformat(),
                                "endAt": export_end.isoformat()}}
@@ -207,7 +214,8 @@ def get_or_create_export_for_activities(client, state, stream, export_start, con
         # largest date range that can be used for activities is 30 days.
         max_export_days = int(config.get('max_export_days',
                                          MAX_EXPORT_DAYS))
-        export_end = get_export_end(export_start,
+
+        export_end = get_export_end(export_start, end_date=config.get('end_date'),
                                     end_days=max_export_days)
         query = {"createdAt": {"startAt": export_start.isoformat(),
                                "endAt": export_end.isoformat()},
@@ -305,8 +313,9 @@ def sync_activities(client, state, stream, config):
     singer.write_schema(stream["tap_stream_id"], stream["schema"], stream["key_properties"], bookmark_properties=[replication_key])
     export_start = pendulum.parse(bookmarks.get_bookmark(state, stream["tap_stream_id"], replication_key))
     job_started = pendulum.utcnow()
+    end_date = pendulum.parse(config.get('end_date',  job_started.isoformat()))
     record_count = 0
-    while export_start < job_started:
+    while export_start < end_date:
         export_id, export_end = get_or_create_export_for_activities(client, state, stream, export_start, config)
         state = wait_for_export(client, state, stream, export_id)
         for row in stream_rows(client, "activities", export_id):
