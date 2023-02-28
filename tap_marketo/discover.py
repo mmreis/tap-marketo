@@ -62,13 +62,17 @@ def get_activity_type_stream(activity):
     # - leadId
     # - activityDate
     # - activityTypeId
+    # - campaignId
     # - primaryAttribute
     # - attributes
-    #
+    # - actionResult
     # marketoGUID, leadId, activityDate, and activityTypeId are simple
     # fields. primaryAttribute has a name and type which define an
     # automatically included field on the record. Attributes is an array
     # of attribute names and types that become available fields.
+
+    # An additional field “actionResult” can be specified to include
+    # the activity action (“succeeded”, “skipped”,  or “failed”).
 
     # Regarding pimaryAttribute fields: On this side of things, Marketo will
     # describe the field in an activity that is considered the primary attribute
@@ -79,7 +83,9 @@ def get_activity_type_stream(activity):
         "marketoGUID": {"type": ["null", "string"]},
         "leadId": {"type": ["null", "integer"]},
         "activityDate": {"type": ["null", "string"], "format": "date-time"},
-        "activityTypeId": {"type": ["null", "integer"]}
+        "activityTypeId": {"type": ["null", "integer"]},
+        "campaignId": {"type": ["null", "integer"]},
+        "actionResult": {"type": ["null", "string"]}
     }
 
     for prop in properties:
