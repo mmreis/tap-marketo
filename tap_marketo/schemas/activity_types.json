@@ -12,6 +12,12 @@
       "name": {
         "type": "string"
       },
+      "campaignId": {
+        "type": "integer"
+      },
+      "actionResult": {
+        "type": ["string", "null"]
+      },
       "description": {
         "type": ["string", "null"]
       },
